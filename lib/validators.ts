@@ -12,6 +12,20 @@ export const leadSchema = z.object({
   website: z.string().optional().or(z.literal('')),
 });
 
+export const leadAdminSchema = z.object({
+  id: z.string().uuid(),
+  leadType: z.enum(['interested', 'inquiry', 'support']),
+  status: z.enum(['new', 'in_progress', 'quoted', 'closed']),
+  name: z.string().trim().min(2).max(120),
+  email: z.string().trim().email().max(180),
+  company: z.string().trim().max(160).optional().or(z.literal('')),
+  phone: z.string().trim().max(40).optional().or(z.literal('')),
+  message: z.string().trim().min(10).max(4000),
+  productId: z.string().uuid().optional().or(z.literal('')),
+  productSlug: z.string().trim().max(200).optional().or(z.literal('')),
+  notes: z.string().trim().max(4000).optional().or(z.literal('')),
+});
+
 export const productSchema = z.object({
   id: z.string().uuid().optional().or(z.literal('')),
   kind: z.enum(['current', 'upcoming']),

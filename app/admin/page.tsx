@@ -2,14 +2,12 @@ import { redirect } from 'next/navigation';
 import { getAdminSession } from '@/lib/session';
 import { getDashboardStats, getLeads, getPageContent, getProducts, getSiteSettings, getAuditLogs } from '@/lib/data';
 import { Button, Card, Input, Select, Textarea } from '@/components/ui';
-import { saveProduct, deleteProduct, saveSettings, savePageContent, updateLeadStatus } from '@/app/admin/actions';
+import { saveProduct, deleteProduct, saveSettings, savePageContent, saveLead, deleteLead } from '@/app/admin/actions';
 import { uploadSiteAsset } from '@/app/admin/upload-actions';
 import { formatDate } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
-
-
 export const revalidate = 0;
 
 export default async function AdminPage() {
@@ -30,7 +28,6 @@ export default async function AdminPage() {
     getPageContent('cookies'),
     getAuditLogs(),
   ]);
-
 
   return (
     <section className="mx-auto max-w-7xl space-y-10 px-4 py-8 sm:px-6 lg:px-8">
@@ -110,12 +107,12 @@ export default async function AdminPage() {
             <form action={saveProduct} encType="multipart/form-data" className="space-y-4">
               <input type="hidden" name="kind" value="upcoming" />
               <div><label className="mb-1 block text-sm">Title</label><Input name="title" /></div>
-              <div><label className="mb-1 block text-sm">Slug</label><Input name="slug" placeholder="launch-name" /></div>
+              <div><label className="mb-1 block text-sm">Slug</label><Input name="slug" placeholder="future-product" /></div>
               <div><label className="mb-1 block text-sm">Subtitle</label><Input name="subtitle" /></div>
               <div><label className="mb-1 block text-sm">Description</label><Textarea name="description" rows={6} /></div>
               <div><label className="mb-1 block text-sm">Image URL</label><Input name="imageUrl" /></div>
               <div><label className="mb-1 block text-sm">Or upload image</label><Input type="file" name="imageFile" accept="image/*" /></div>
-              <div><label className="mb-1 block text-sm">CTA label</label><Input name="ctaLabel" defaultValue="Register interest" /></div>
+              <div><label className="mb-1 block text-sm">CTA label</label><Input name="ctaLabel" defaultValue="Interested" /></div>
               <div><label className="mb-1 block text-sm">CTA href</label><Input name="ctaHref" defaultValue="/inquire" /></div>
               <div><label className="mb-1 block text-sm">SEO title</label><Input name="seoTitle" /></div>
               <div><label className="mb-1 block text-sm">SEO description</label><Textarea name="seoDescription" rows={3} /></div>
@@ -138,7 +135,7 @@ export default async function AdminPage() {
                     <div className="font-medium">{product.title}</div>
                     <div className="text-xs text-slate-500">/{product.slug} · {product.featured ? 'featured' : 'not featured'}</div>
                   </div>
-                  <form action={deleteProduct}><input type="hidden" name="id" value={product.id} /><Button type="submit">Delete</Button></form>
+                  <form action={deleteProduct}><input type="hidden" name="id" value={product.id} /><Button type="submit" className="bg-red-600 text-white hover:bg-red-700 dark:bg-red-500 dark:text-white dark:hover:bg-red-600">Delete</Button></form>
                 </div>
                 <form action={saveProduct} encType="multipart/form-data" className="mt-4 grid gap-3 md:grid-cols-2">
                   <input type="hidden" name="id" value={product.id} />
@@ -172,7 +169,7 @@ export default async function AdminPage() {
                     <div className="font-medium">{product.title}</div>
                     <div className="text-xs text-slate-500">/{product.slug} · {product.featured ? 'featured' : 'not featured'}</div>
                   </div>
-                  <form action={deleteProduct}><input type="hidden" name="id" value={product.id} /><Button type="submit">Delete</Button></form>
+                  <form action={deleteProduct}><input type="hidden" name="id" value={product.id} /><Button type="submit" className="bg-red-600 text-white hover:bg-red-700 dark:bg-red-500 dark:text-white dark:hover:bg-red-600">Delete</Button></form>
                 </div>
                 <form action={saveProduct} encType="multipart/form-data" className="mt-4 grid gap-3 md:grid-cols-2">
                   <input type="hidden" name="id" value={product.id} />
@@ -199,21 +196,51 @@ export default async function AdminPage() {
 
       <Card className="space-y-4">
         <h2 className="text-2xl font-semibold tracking-tight">CRM leads</h2>
-        <div className="grid gap-4 xl:grid-cols-3">
+        <div className="grid gap-4 xl:grid-cols-2 2xl:grid-cols-3">
           {leads.map((lead) => (
             <div key={lead.id} className="rounded-2xl border p-4">
-              <div className="flex items-center justify-between gap-3">
+              <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="font-medium">{lead.name}</div>
                   <div className="text-xs text-slate-500">{lead.email} · {lead.lead_type}</div>
+                  <div className="text-xs text-slate-500">Created {formatDate(lead.created_at)}</div>
                 </div>
-                <div className="text-xs text-slate-500">{formatDate(lead.created_at)}</div>
+                <form action={deleteLead}>
+                  <input type="hidden" name="id" value={lead.id} />
+                  <Button type="submit" className="bg-red-600 text-white hover:bg-red-700 dark:bg-red-500 dark:text-white dark:hover:bg-red-600">Delete</Button>
+                </form>
               </div>
-              <p className="mt-3 whitespace-pre-wrap text-sm text-slate-600 dark:text-slate-300">{lead.message}</p>
-              <form action={updateLeadStatus} className="mt-4 grid gap-3 md:grid-cols-[1fr_auto]">
+
+              <form action={saveLead} className="mt-4 grid gap-3">
                 <input type="hidden" name="id" value={lead.id} />
-                <Select name="status" defaultValue={lead.status}><option value="new">New</option><option value="in_progress">In progress</option><option value="quoted">Quoted</option><option value="closed">Closed</option></Select>
-                <Button type="submit">Update</Button>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <div>
+                    <label className="mb-1 block text-xs">Lead type</label>
+                    <Select name="leadType" defaultValue={lead.lead_type}>
+                      <option value="interested">Interested</option>
+                      <option value="inquiry">Inquiry</option>
+                      <option value="support">Support</option>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs">Status</label>
+                    <Select name="status" defaultValue={lead.status}>
+                      <option value="new">New</option>
+                      <option value="in_progress">In progress</option>
+                      <option value="quoted">Quoted</option>
+                      <option value="closed">Closed</option>
+                    </Select>
+                  </div>
+                  <div><label className="mb-1 block text-xs">Name</label><Input name="name" defaultValue={lead.name} /></div>
+                  <div><label className="mb-1 block text-xs">Email</label><Input name="email" type="email" defaultValue={lead.email} /></div>
+                  <div><label className="mb-1 block text-xs">Company</label><Input name="company" defaultValue={lead.company ?? ''} /></div>
+                  <div><label className="mb-1 block text-xs">Phone</label><Input name="phone" defaultValue={lead.phone ?? ''} /></div>
+                  <div><label className="mb-1 block text-xs">Product ID</label><Input name="productId" defaultValue={lead.product_id ?? ''} /></div>
+                  <div><label className="mb-1 block text-xs">Product slug</label><Input name="productSlug" defaultValue={lead.product_slug ?? ''} /></div>
+                </div>
+                <div><label className="mb-1 block text-xs">Message</label><Textarea name="message" rows={5} defaultValue={lead.message} /></div>
+                <div><label className="mb-1 block text-xs">Notes</label><Textarea name="notes" rows={4} defaultValue={lead.notes ?? ''} /></div>
+                <Button type="submit">Save lead</Button>
               </form>
             </div>
           ))}
@@ -258,7 +285,6 @@ export default async function AdminPage() {
         </Card>
       </div>
 
-
       <Card className="space-y-4">
         <h2 className="text-2xl font-semibold tracking-tight">Audit logs</h2>
         <div className="grid gap-3">
@@ -273,6 +299,7 @@ export default async function AdminPage() {
           ))}
         </div>
       </Card>
+
       <Card>
         <div className="text-sm text-slate-500">Admin footer: {settings.brand_name} · {adminEmail}</div>
       </Card>

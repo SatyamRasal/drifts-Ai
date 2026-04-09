@@ -75,6 +75,12 @@ create trigger touch_products_updated_at before update on public.products for ea
 create trigger touch_leads_updated_at before update on public.leads for each row execute function public.touch_updated_at();
 create trigger touch_pages_updated_at before update on public.pages for each row execute function public.touch_updated_at();
 
+
+create index if not exists idx_products_kind_sort_order on public.products (kind, sort_order, created_at desc);
+create index if not exists idx_leads_status_created_at on public.leads (status, created_at desc);
+create index if not exists idx_audit_logs_created_at on public.audit_logs (created_at desc);
+
+
 alter table public.site_settings enable row level security;
 alter table public.products enable row level security;
 alter table public.leads enable row level security;
