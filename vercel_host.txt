@@ -1,0 +1,31 @@
+Drifts AI — Vercel deployment guide
+
+1. Create a new Vercel project and import this repository.
+2. Set the framework preset to Next.js.
+3. Add these environment variables in Vercel:
+   - NEXT_PUBLIC_SUPABASE_URL
+   - NEXT_PUBLIC_SUPABASE_ANON_KEY
+   - SUPABASE_SERVICE_ROLE_KEY
+   - SUPABASE_STORAGE_BUCKET
+   - ADMIN_EMAIL
+   - ADMIN_PASSWORD or ADMIN_PASSWORD_HASH
+   - ADMIN_SESSION_SECRET
+   - SMTP_HOST
+   - SMTP_PORT
+   - SMTP_SECURE
+   - SMTP_USER
+   - SMTP_PASS
+   - MAIL_FROM
+   - NOTIFY_EMAIL
+4. Make sure NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY belong to the same Supabase project.
+5. If any secret contains spaces or # characters, add it as a quoted value in local .env files or paste it directly into Vercel's environment variable fields.
+6. Run the Supabase schema from supabase/schema.sql on the same project that owns your anon and service role keys.
+7. Confirm the assets storage bucket exists and is public, or adjust SUPABASE_STORAGE_BUCKET to the bucket name you created.
+8. Deploy to Vercel.
+9. In Vercel project settings, add the custom domain driftsai.com.
+10. Visit /admin/login and sign in with ADMIN_EMAIL and ADMIN_PASSWORD.
+
+Operational notes:
+- The app now prefers NEXT_PUBLIC_SUPABASE_URL for server-side admin access, with SUPABASE_URL as a fallback.
+- If you use ADMIN_PASSWORD_HASH, generate it with bcrypt and keep the plain password out of production secrets.
+- If login fails, first verify that the password is not being truncated by an unquoted # character in your environment file.
