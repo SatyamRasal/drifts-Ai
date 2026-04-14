@@ -13,7 +13,7 @@ export default async function UpcomingPage() {
   const [settings, products] = await Promise.all([getSiteSettings(), getProducts('upcoming')]);
   return (
     <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <SectionHeading eyebrow="Upcoming" title="Products in development" description={`Use this page to create anticipation before launch. ${settings.brand_name} can collect interest before a product goes live.`} />
+      <SectionHeading eyebrow="Upcoming" title="Products in development" description={`Something powerful is in the pipeline. Join the ${settings.brand_name} waitlist to get early access and be the first to know when our new software goes live.`} />
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
         {products.map((product) => <ProductCard key={product.id} product={product} basePath="/upcoming" />)}
       </div>

@@ -27,21 +27,21 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
           <div className="space-y-4">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-white/80 dark:border-slate-300 dark:bg-white/70 dark:text-slate-700">
-              Secure access
+              DriftsAI Portal
             </div>
             <h1 className="max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl">
-              A cleaner login flow for customers, leads, and admins.
+              Welcome to Your DriftsAI Workspace
             </h1>
             <p className="max-w-2xl text-sm leading-6 text-white/75 dark:text-slate-700">
-              One account handles enquiry capture, support, and CRM access. Admin users unlock the control panel automatically after sign-in.
+              Sign in to manage your custom software projects, submit new enterprise development inquiries, and collaborate directly with our engineering team.
             </p>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
             {[
-              ['Protected sessions', 'Signed cookies for visitor and admin access.'],
-              ['Fast recovery', 'Password reset is built in.'],
-              ['Role-aware access', 'CRM access stays restricted to allowlisted admins.'],
+              ['Enterprise-Grade Security', 'Your project requirements and organizational data are protected with industry-standard encryption.'],
+              ['Direct Developer Access', 'Seamlessly collaborate with our engineering team and track the progress of your custom builds.'],
+              ['Scalable Solutions', 'From ready-made tools to custom mobile applications for thousands of employees, manage everything securely.'],
             ].map(([title, body]) => (
               <Card key={title} className="border-white/10 bg-white/10 p-4 text-white shadow-none dark:border-slate-200 dark:bg-white/70 dark:text-slate-950">
                 <div className="text-sm font-medium">{title}</div>
@@ -52,9 +52,9 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         </div>
 
         <div className="mt-6 flex flex-wrap gap-2">
-          <Badge className="border-white/15 bg-white/10 text-white/80 dark:border-slate-200 dark:bg-white/70 dark:text-slate-700"><ShieldCheck className="mr-1 h-3.5 w-3.5" /> Secure by default</Badge>
-          <Badge className="border-white/15 bg-white/10 text-white/80 dark:border-slate-200 dark:bg-white/70 dark:text-slate-700"><Sparkles className="mr-1 h-3.5 w-3.5" /> Signup + reset</Badge>
-          <Badge className="border-white/15 bg-white/10 text-white/80 dark:border-slate-200 dark:bg-white/70 dark:text-slate-700"><LifeBuoy className="mr-1 h-3.5 w-3.5" /> Support-ready</Badge>
+          <Badge className="border-white/15 bg-white/10 text-white/80 dark:border-slate-200 dark:bg-white/70 dark:text-slate-700"><ShieldCheck className="mr-1 h-3.5 w-3.5" /> Enterprise Security</Badge>
+          <Badge className="border-white/15 bg-white/10 text-white/80 dark:border-slate-200 dark:bg-white/70 dark:text-slate-700"><Sparkles className="mr-1 h-3.5 w-3.5" /> Custom Engineering</Badge>
+          <Badge className="border-white/15 bg-white/10 text-white/80 dark:border-slate-200 dark:bg-white/70 dark:text-slate-700"><LifeBuoy className="mr-1 h-3.5 w-3.5" /> Workflow Automation</Badge>
         </div>
       </div>
 

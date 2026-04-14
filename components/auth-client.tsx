@@ -215,17 +215,18 @@ export function AuthClient({ nextPath, signedInEmail, signedInRole }: { nextPath
 
         {message ? <div role="status" aria-live="polite" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">{message}</div> : null}
       </Card>
-
-      <Card className="space-y-5">
+<Card className="space-y-5">
         <div className="space-y-2">
-          <div className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">Account state</div>
-          <h3 className="text-2xl font-semibold tracking-tight">{signedInEmail ? 'You are already signed in' : 'Login required for lead submission'}</h3>
+          <div className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">Account Status</div>
+          <h3 className="text-2xl font-semibold tracking-tight">
+            {signedInEmail ? 'You are securely signed in' : 'Partnering with DriftsAI'}
+          </h3>
           <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">
             {signedInEmail
               ? canOpenCrm || nextPath !== '/admin'
-                ? `Authenticated as ${signedInEmail}. You can continue to the requested page or sign out.`
-                : `Authenticated as ${signedInEmail}, but this account does not have CRM access. Sign out and use an allowlisted administrator email.`
-              : 'Visitors can browse the catalog, but inquiries, interest submissions, and support requests require an authenticated session.'}
+                ? `Authenticated as ${signedInEmail}. You can continue to your requested workspace or sign out.`
+                : `Authenticated as ${signedInEmail}, but this account does not have administrative access. Please sign out and use an authorized DriftsAI admin email to access the control panel.`
+              : 'While anyone can browse our ready-to-deploy software catalog, an authenticated account is required to request custom development, submit a project brief, or access support.'}
           </p>
         </div>
 

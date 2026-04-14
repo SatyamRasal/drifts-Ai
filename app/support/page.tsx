@@ -12,7 +12,7 @@ export default async function SupportPage({ searchParams }: { searchParams: Prom
 
   return (
     <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-      <SectionHeading eyebrow="Support" title="Send product feedback or support issues" description="Use this page for bug reports, product feedback, or support requests from existing customers." />
+      <SectionHeading eyebrow="Support" title="Send product feedback or support issues" description="Use this page for bug reports, product feedback, or support requests." />
 
       <Card className="mt-8 space-y-4">
         <div className="text-lg font-semibold">Support workflow</div>
