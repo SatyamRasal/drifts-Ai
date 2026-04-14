@@ -25,7 +25,7 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950 text-white dark:bg-white dark:text-slate-950">
-              {settings.logo_url ? <img src={settings.logo_url} alt={settings.brand_name} className="h-full w-full rounded-2xl object-cover" /> : <span className="text-sm font-semibold">D</span>}
+              {settings.logo_url ? <img src={settings.logo_url} alt={settings.brand_name} className="h-full w-full rounded-2xl object-contain p-1" /> : <span className="text-sm font-semibold">D</span>}
             </div>
             <div>
               <div className="text-sm font-semibold tracking-tight">{settings.brand_name}</div>

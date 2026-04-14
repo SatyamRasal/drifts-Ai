@@ -1,4 +1,5 @@
 import { Badge, Card, LinkButton } from '@/components/ui';
+import { FittedImage } from '@/components/fitted-image';
 import { SectionHeading } from '@/components/section-heading';
 import type { LandingBlock } from '@/lib/data';
 import { ArrowRight, Sparkles } from 'lucide-react';
@@ -60,7 +61,7 @@ export function LandingBlocks({ blocks }: { blocks: LandingBlock[] }) {
                 {block.media_url ? (
                   <Card className="relative overflow-hidden p-0">
                     <div className="p-4">
-                      <img src={block.media_url} alt={block.title || 'Landing media'} className="h-full w-full rounded-[1.5rem] object-cover" />
+                      <FittedImage src={block.media_url} alt={block.title || 'Landing media'} aspectClassName="aspect-[16/10]" className="rounded-[1.5rem]" />
                     </div>
                   </Card>
                 ) : null}
@@ -79,7 +80,7 @@ export function LandingBlocks({ blocks }: { blocks: LandingBlock[] }) {
                   {block.body ? <p className="text-sm leading-7 text-slate-600 dark:text-slate-300">{block.body}</p> : null}
                 </div>
                 {block.media_url ? (
-                  <img src={block.media_url} alt={block.title || 'Image section'} className="w-full rounded-[2rem] border object-cover shadow-soft" />
+                  <FittedImage src={block.media_url} alt={block.title || 'Image section'} aspectClassName="aspect-[16/10]" className="rounded-[2rem] border shadow-soft" />
                 ) : null}
               </div>
             </section>

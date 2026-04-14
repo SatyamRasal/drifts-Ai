@@ -87,6 +87,7 @@ export const settingsSchema = z.object({
   chatbotAiEnabled: z.preprocess((value: unknown) => value === true || value === 'true' || value === '1' || value === 1 || value === 'on', z.boolean()),
   chatbotAiModel: z.string().trim().min(1).max(80),
   chatbotSystemPrompt: z.string().trim().min(20).max(4000),
+  googleAnalyticsId: z.string().trim().regex(/^[A-Z0-9-]+$/i).optional().or(z.literal('')),
   chatbotOpenAiApiKey: z.string().trim().max(4096).optional().or(z.literal('')),
 });
 

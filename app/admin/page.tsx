@@ -160,6 +160,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
             <div><label className="mb-1 block text-sm">Button style</label><Select name="buttonStyle" defaultValue={settings.button_style}><option value="solid">Solid</option><option value="outline">Outline</option><option value="soft">Soft</option></Select></div>
             <div><label className="mb-1 block text-sm">SEO title</label><Input name="seoTitle" defaultValue={settings.seo_title} /></div>
             <div className="md:col-span-2"><label className="mb-1 block text-sm">SEO description</label><Textarea name="seoDescription" rows={3} defaultValue={settings.seo_description} /></div>
+            <div><label className="mb-1 block text-sm">Google Analytics ID</label><Input name="googleAnalyticsId" defaultValue={settings.google_analytics_id} placeholder="G-XXXXXXXXXX" /></div>
             <div><label className="mb-1 block text-sm">Logo URL</label><Input name="logoUrl" defaultValue={settings.logo_url} /></div>
             <div><label className="mb-1 block text-sm">Favicon URL</label><Input name="faviconUrl" defaultValue={settings.favicon_url} /></div>
             <div><label className="mb-1 block text-sm">Open Graph image URL</label><Input name="ogImageUrl" defaultValue={settings.og_image_url} /></div>
@@ -183,7 +184,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h3 className="text-xl font-semibold tracking-tight">Chatbot knowledge base</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-300">Add natural-language question and answer pairs. Upload a CSV or paste rows in the format: question | answer | tags | priority | enabled.</p>
+                <p className="text-sm text-slate-600 dark:text-slate-300">Add natural-language question and answer pairs. Upload the demo CSV or paste rows in the format: question | answer | tags | priority | enabled.</p>
               </div>
               <div className="text-sm text-slate-500">{settings.chatbot_faqs.length} saved answers</div>
             </div>

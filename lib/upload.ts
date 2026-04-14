@@ -14,23 +14,18 @@ export async function uploadOptionalFile(file: FormDataEntryValue | null, folder
     throw new Error('Upload is too large. Maximum size is 8 MB.');
   }
 
-  try {
-    const supabase = getSupabaseAdminClient();
-    const bucket = process.env.SUPABASE_STORAGE_BUCKET || 'assets';
-    const sanitized = sanitizeFilename(file.name);
-    const ext = sanitized.includes('.') ? sanitized.split('.').pop() || 'bin' : 'bin';
-    const path = `${folder}/${randomUUID()}.${ext}`;
-    const arrayBuffer = await file.arrayBuffer();
-    const { error } = await supabase.storage.from(bucket).upload(path, Buffer.from(arrayBuffer), {
-      cacheControl: '3600',
-      upsert: true,
-      contentType: file.type || 'application/octet-stream',
-    });
-    if (error) throw error;
-    const { data } = supabase.storage.from(bucket).getPublicUrl(path);
-    return data.publicUrl;
-  } catch (error) {
-    console.error('File upload failed:', error);
-    return '';
-  }
+  const supabase = getSupabaseAdminClient();
+  const bucket = process.env.SUPABASE_STORAGE_BUCKET || 'assets';
+  const sanitized = sanitizeFilename(file.name);
+  const ext = sanitized.includes('.') ? sanitized.split('.').pop() || 'bin' : 'bin';
+  const path = `${folder}/${randomUUID()}.${ext}`;
+  const arrayBuffer = await file.arrayBuffer();
+  const { error } = await supabase.storage.from(bucket).upload(path, Buffer.from(arrayBuffer), {
+    cacheControl: '3600',
+    upsert: true,
+    contentType: file.type || 'application/octet-stream',
+  });
+  if (error) throw error;
+  const { data } = supabase.storage.from(bucket).getPublicUrl(path);
+  return data.publicUrl;
 }

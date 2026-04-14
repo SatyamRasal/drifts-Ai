@@ -127,6 +127,7 @@ export async function saveSettings(formData: FormData) {
     ['theme', parsed.data.theme],
     ['seo_title', parsed.data.seoTitle],
     ['seo_description', parsed.data.seoDescription],
+    ['google_analytics_id', parsed.data.googleAnalyticsId || ''],
     ['og_image_url', parsed.data.ogImageUrl || ''],
     ['accent_color', parsed.data.accentColor],
     ['font_family', parsed.data.fontFamily],

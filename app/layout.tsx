@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { SiteShell } from '@/components/site-shell';
+import { GoogleAnalytics } from '@/components/google-analytics';
 import { getSiteSettings } from '@/lib/data';
 import type { CSSProperties } from 'react';
 
@@ -35,6 +36,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     <html lang="en" suppressHydrationWarning data-button-style={settings.button_style} style={style}>
       <body>
         <ThemeProvider defaultTheme={settings.theme}>
+          <GoogleAnalytics measurementId={settings.google_analytics_id} />
           <SiteShell>{children}</SiteShell>
         </ThemeProvider>
       </body>

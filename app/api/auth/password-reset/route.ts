@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getConfiguredSiteUrl } from '@/lib/site-url';
 
 export const runtime = 'nodejs';
 
@@ -16,7 +17,7 @@ function getAnonKey() {
 }
 
 function getSiteUrl(req: Request) {
-  return (process.env.SITE_URL || new URL(req.url).origin).replace(/\/$/, '');
+  return getConfiguredSiteUrl() || new URL(req.url).origin.replace(/\/$/, '');
 }
 
 export async function POST(req: Request) {

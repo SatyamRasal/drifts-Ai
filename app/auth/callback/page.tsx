@@ -4,6 +4,10 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
 
+function getSafeNextPath(value: string) {
+  return value.startsWith('/') && !value.startsWith('//') ? value : '/';
+}
+
 async function bootstrap(accessToken: string, nextPath: string) {
   const response = await fetch('/api/auth/session', {
     method: 'POST',
@@ -23,7 +27,7 @@ async function bootstrap(accessToken: string, nextPath: string) {
 export default function AuthCallbackPage() {
   const params = useSearchParams();
   const type = params.get('type') || '';
-  const nextPath = params.get('next') || (type === 'recovery' ? '/reset-password' : '/');
+  const nextPath = getSafeNextPath(params.get('next') || (type === 'recovery' ? '/reset-password' : '/'));
   const [status, setStatus] = useState(type === 'recovery' ? 'Completing password recovery…' : 'Finalizing sign-in…');
 
   useEffect(() => {

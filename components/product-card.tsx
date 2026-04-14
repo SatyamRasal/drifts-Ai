@@ -1,4 +1,5 @@
 import { Badge, Card, LinkButton } from '@/components/ui';
+import { FittedImage } from '@/components/fitted-image';
 import { formatDate } from '@/lib/utils';
 import { ArrowUpRight, Sparkles } from 'lucide-react';
 import type { Product } from '@/lib/data';
@@ -8,9 +9,9 @@ export function ProductCard({ product, basePath }: { product: Product; basePath:
     <Card className="group relative overflow-hidden transition hover:-translate-y-1 hover:shadow-2xl">
       <div className="mb-5 overflow-hidden rounded-2xl border bg-slate-100 dark:bg-slate-900">
         {product.image_url ? (
-          <img src={product.image_url} alt={product.title} className="h-56 w-full object-cover transition duration-500 group-hover:scale-105" />
+          <FittedImage src={product.image_url} alt={product.title} aspectClassName="aspect-[16/10]" className="transition duration-500 group-hover:scale-105" />
         ) : (
-          <div className="flex h-56 items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(148,163,184,0.3),_transparent_55%)] text-slate-500">No image yet</div>
+          <div className="flex aspect-[16/10] items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(148,163,184,0.3),_transparent_55%)] text-slate-500">No image yet</div>
         )}
       </div>
 

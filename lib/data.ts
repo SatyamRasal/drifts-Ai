@@ -56,6 +56,7 @@ export type SiteSettings = {
   chatbot_ai_enabled: boolean;
   chatbot_ai_model: string;
   chatbot_system_prompt: string;
+  google_analytics_id: string;
   chatbot_faqs: ChatbotFaq[];
   chatbot_openai_api_key?: string;
 };
@@ -151,6 +152,7 @@ const defaults: SiteSettings = {
   chatbot_ai_enabled: false,
   chatbot_ai_model: 'gpt-4.1-mini',
   chatbot_system_prompt: 'You are a CRM website assistant. Answer concisely, use only the provided knowledge base and product/site context, and avoid inventing details. If the answer is not known, say so and suggest the default fallback.',
+  google_analytics_id: '',
   chatbot_faqs: [],
 };
 
@@ -259,6 +261,7 @@ function mapSettings(data: Record<string, unknown> | null | undefined, includeSe
     chatbot_ai_enabled: Boolean(data.chatbot_ai_enabled ?? defaults.chatbot_ai_enabled),
     chatbot_ai_model: String(data.chatbot_ai_model ?? defaults.chatbot_ai_model),
     chatbot_system_prompt: String(data.chatbot_system_prompt ?? defaults.chatbot_system_prompt),
+    google_analytics_id: String(data.google_analytics_id ?? ''),
     chatbot_faqs: faqs,
     chatbot_openai_api_key: includeSecrets ? String(data.chatbot_openai_api_key ?? '') : '',
   };

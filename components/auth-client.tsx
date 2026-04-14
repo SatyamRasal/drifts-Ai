@@ -3,6 +3,7 @@
 import { useMemo, useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
+import { getClientSiteUrl } from '@/lib/site-url';
 import { Button, Card, Input, SecondaryButton } from '@/components/ui';
 import { LockKeyhole, Mail, ShieldCheck, Sparkles, KeyRound } from 'lucide-react';
 import { formatAuthMessage } from '@/lib/messages';
@@ -10,6 +11,13 @@ import { formatAuthMessage } from '@/lib/messages';
 type Mode = 'signin' | 'signup' | 'reset';
 
 const GOOGLE_ENABLED = process.env.NEXT_PUBLIC_SUPABASE_GOOGLE_OAUTH_ENABLED === 'true';
+
+function getAuthCallbackUrl(nextPath: string) {
+  const base = getClientSiteUrl() || 'http://localhost:3000';
+  const url = new URL('/auth/callback', base);
+  url.searchParams.set('next', nextPath);
+  return url.toString();
+}
 
 async function bootstrapSession(accessToken: string, nextPath: string) {
   const response = await fetch('/api/auth/session', {
@@ -71,7 +79,7 @@ export function AuthClient({ nextPath, signedInEmail, signedInRole }: { nextPath
           password,
           options: {
             data: fullName ? { full_name: fullName } : undefined,
-            emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
+            emailRedirectTo: getAuthCallbackUrl(nextPath),
           },
         });
         if (error) throw error;
@@ -105,7 +113,7 @@ export function AuthClient({ nextPath, signedInEmail, signedInRole }: { nextPath
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
+          redirectTo: getAuthCallbackUrl(nextPath),
         },
       });
       if (error) throw error;
@@ -129,8 +137,8 @@ export function AuthClient({ nextPath, signedInEmail, signedInRole }: { nextPath
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-      <Card className="space-y-6">
+    <div className="flex flex-col gap-6 lg:flex-row">
+      <Card className="flex-1 space-y-6">
         <div className="space-y-3">
           <div className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium text-slate-600 dark:text-slate-300">
             <ShieldCheck className="h-3.5 w-3.5" /> Secure login
@@ -141,7 +149,7 @@ export function AuthClient({ nextPath, signedInEmail, signedInRole }: { nextPath
           </p>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <SecondaryButton type="button" onClick={() => setMode('signin')} className={mode === 'signin' ? 'border-slate-950 bg-slate-100 dark:border-white dark:bg-slate-800' : ''}>
             <LockKeyhole className="mr-2 h-4 w-4" /> Sign in
           </SecondaryButton>
@@ -215,7 +223,8 @@ export function AuthClient({ nextPath, signedInEmail, signedInRole }: { nextPath
 
         {message ? <div role="status" aria-live="polite" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">{message}</div> : null}
       </Card>
-<Card className="space-y-5">
+
+      <Card className="flex-1 space-y-5">
         <div className="space-y-2">
           <div className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">Account Status</div>
           <h3 className="text-2xl font-semibold tracking-tight">
@@ -243,7 +252,7 @@ export function AuthClient({ nextPath, signedInEmail, signedInRole }: { nextPath
             </div>
           </div>
         ) : (
-          <div className="grid gap-3 rounded-3xl border border-dashed p-5 text-sm text-slate-600 dark:text-slate-300">
+          <div className="space-y-3 rounded-3xl border border-dashed p-5 text-sm text-slate-600 dark:text-slate-300">
             <div className="flex items-center gap-3"><ShieldCheck className="h-4 w-4" /> Verified email sessions are required.</div>
             <div className="flex items-center gap-3"><ShieldCheck className="h-4 w-4" /> Password login and signup are supported.</div>
             <div className="flex items-center gap-3"><ShieldCheck className="h-4 w-4" /> Admin access is granted automatically when your email matches the allowlist.</div>

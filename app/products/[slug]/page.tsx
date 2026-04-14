@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { getProductBySlug, getSiteSettings } from '@/lib/data';
 import { Badge, Button, Card, Input, Textarea } from '@/components/ui';
 import { SectionHeading } from '@/components/section-heading';
+import { FittedImage } from '@/components/fitted-image';
 import { createLead } from '@/app/actions';
 import { getActiveSession, getSessionDisplayName } from '@/lib/active-session';
 
@@ -32,7 +33,7 @@ export default async function ProductDetailPage({ params, searchParams }: { para
       <div className="mt-8 grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
         <Card className="space-y-6">
           <div className="overflow-hidden rounded-3xl border">
-            {product.image_url ? <img src={product.image_url} alt={product.title} className="h-[420px] w-full object-cover" /> : <div className="flex h-[420px] items-center justify-center bg-slate-100 text-slate-500 dark:bg-slate-900">No image yet</div>}
+            {product.image_url ? <FittedImage src={product.image_url} alt={product.title} aspectClassName="aspect-[5/4]" className="rounded-3xl border" /> : <div className="flex aspect-[5/4] items-center justify-center rounded-3xl border bg-slate-100 text-slate-500 dark:bg-slate-900">No image yet</div>}
           </div>
           <div className="flex flex-wrap gap-2">
             <Badge>{product.kind === 'current' ? 'Live now' : 'Coming soon'}</Badge>

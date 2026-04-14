@@ -147,7 +147,11 @@ What is your refund policy? | Refunds are handled case by case. | billing; refun
 How do I contact support? | Email support@yourcompany.com. | support; contact | 4 | true
 ```
 
-You can also upload a CSV or sheet export with the same columns.
+A ready-made demo file is included here:
+
+- `examples/chatbot-knowledge-demo-1000.csv`
+
+You can upload that CSV directly, or use any sheet export with the same columns.
 
 ### Enable AI fallback
 
@@ -200,6 +204,10 @@ Do not skip these:
 - `ADMIN_SESSION_SECRET`
 - `AUTH_SESSION_SECRET`
 - `SITE_URL`
+
+For authentication links and email redirects, also set:
+
+- `NEXT_PUBLIC_SITE_URL` (for example, `https://driftsai.com` in production)
 
 ### 4) Update Supabase redirect settings
 
@@ -264,3 +272,7 @@ Check service role access and confirm the SQL schema was applied.
 ## License
 
 Use this code according to your business and client agreement.
+
+## Google Analytics
+
+Add your GA4 Measurement ID in the admin panel under **Site settings**. The tracker is rendered globally and records SPA route changes.

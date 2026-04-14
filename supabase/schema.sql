@@ -107,6 +107,7 @@ values
   ('theme', '"system"'::jsonb),
   ('seo_title', '"Drifts AI — Premium software solutions and CRM"'::jsonb),
   ('seo_description', '"A high-end product website with interested leads, enquiries, support requests, admin CMS, and Supabase CRM."'::jsonb),
+  ('google_analytics_id', '""'::jsonb),
   ('og_image_url', '""'::jsonb),
   ('social_links', '[]'::jsonb),
   ('accent_color', '"#0f172a"'::jsonb),
