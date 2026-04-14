@@ -29,7 +29,7 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
             </div>
             <div>
               <div className="text-sm font-semibold tracking-tight">{settings.brand_name}</div>
-              <div className="text-xs text-slate-500 dark:text-slate-400">Premium product showcase</div>
+              <div className="text-xs text-slate-500 dark:text-slate-400">Premium software solutions</div>
             </div>
           </Link>
 

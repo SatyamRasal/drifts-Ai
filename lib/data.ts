@@ -137,7 +137,7 @@ const defaults: SiteSettings = {
   office_address: 'India',
   footer_text: 'Built for premium product brands. Admin access is restricted and every lead is tracked in CRM.',
   theme: 'system',
-  seo_title: 'Drifts AI — Premium product showcase and CRM',
+  seo_title: 'Drifts AI — Premium software solutions and CRM',
   seo_description: 'A high-end product website with interested leads, enquiries, support requests, admin CMS, and Supabase CRM.',
   og_image_url: '',
   social_links: [],

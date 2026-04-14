@@ -105,7 +105,7 @@ values
   ('office_address', '"India"'::jsonb),
   ('footer_text', '"Built for premium product brands. Admin access is restricted and every lead is tracked in CRM."'::jsonb),
   ('theme', '"system"'::jsonb),
-  ('seo_title', '"Drifts AI — Premium product showcase and CRM"'::jsonb),
+  ('seo_title', '"Drifts AI — Premium software solutions and CRM"'::jsonb),
   ('seo_description', '"A high-end product website with interested leads, enquiries, support requests, admin CMS, and Supabase CRM."'::jsonb),
   ('og_image_url', '""'::jsonb),
   ('social_links', '[]'::jsonb),

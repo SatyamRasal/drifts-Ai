@@ -96,7 +96,7 @@ export default async function HomePage() {
 
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="flex items-end justify-between gap-6">
-          <SectionHeading eyebrow="Current" title="Products available now" description="Show what is live today and route every interested visitor into CRM." />
+          <SectionHeading eyebrow="Current" title="Explore Our Premium Products" description="Browse Premium Software * Discover Our Solutions" />
           <Link href="/products" className="hidden text-sm font-medium text-slate-600 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white sm:block">View all</Link>
         </div>
         <div className="mt-8 grid gap-6 lg:grid-cols-3">
@@ -107,9 +107,9 @@ export default async function HomePage() {
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="grid gap-6 rounded-[2rem] border bg-slate-950 p-8 text-white shadow-soft lg:grid-cols-[1.2fr_0.8fr]">
           <div className="space-y-4">
-            <div className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Why this works</div>
-            <h2 className="text-3xl font-semibold tracking-tight">A sales website and CRM in one system</h2>
-            <p className="max-w-2xl text-sm leading-6 text-slate-300">Visitors can express interest without friction. Admins can manage products, upcoming launches, inquiries, and support requests from one protected control plane.</p>
+            <div className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Why We Do It</div>
+            <h2 className="text-3xl font-semibold tracking-tight">Empowering Organizations Through Scalable Software</h2>
+            <p className="max-w-2xl text-sm leading-6 text-slate-300">DriftsAI is a dedicated software hub offering a dual approach to technology: robust, ready-to-deploy digital products and bespoke engineering services. We specialize in transforming complex organizational challenges into streamlined, intuitive mobile and web applications designed to support your entire workforce effortlessly.</p>
           </div>
           <div className="grid gap-3">
             {["Products", "Upcoming products", "Interested leads", "General inquiries", "Support feedback", "Audit logs"].map((item) => (
@@ -123,7 +123,7 @@ export default async function HomePage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <SectionHeading eyebrow="Upcoming" title="Products in the pipeline" description="Use this area for launches, preorders, and demand collection before a product is public." />
+        <SectionHeading eyebrow="Upcoming" title="Upcoming Releases" description="Coming Soon (Very standard, highly recognizable)" />
         <div className="mt-8 grid gap-6 lg:grid-cols-3">
           {upcoming.slice(0, 6).map((product) => <ProductCard key={product.id} product={product} basePath="/upcoming" />)}
         </div>
@@ -133,7 +133,7 @@ export default async function HomePage() {
         <Card className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <div className="text-lg font-semibold">Need a custom build?</div>
-            <div className="text-sm text-slate-600 dark:text-slate-300">Send an inquiry and let the admin team respond through CRM.</div>
+            <div className="text-sm text-slate-600 dark:text-slate-300">Send an inquiry and let the driftsAi team respond through CRM.</div>
           </div>
           <LinkButton href="/inquire" className="bg-slate-950 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-200">Open inquiry form</LinkButton>
         </Card>

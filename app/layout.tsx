@@ -7,7 +7,7 @@ import type { CSSProperties } from 'react';
 
 export const metadata: Metadata = {
   title: 'Drifts AI',
-  description: 'Premium product showcase website with CRM, admin CMS, and secure lead handling.',
+  description: 'Premium software solutions website with CRM, admin CMS, and secure lead handling.',
 };
 
 function fontStack(font: string) {
