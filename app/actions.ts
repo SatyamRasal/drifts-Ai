@@ -7,14 +7,20 @@ import { tryGetSupabaseAdminClient } from '@/lib/supabase';
 import { buildLeadEmailHtml, maybeSendNotificationEmail } from '@/lib/mailer';
 import { writeAuditLog } from '@/lib/audit';
 import { sanitizeRedirectPath } from '@/lib/utils';
-
-
+import { formatValidationMessage } from '@/lib/messages';
+import { getActiveSession } from '@/lib/active-session';
 
 export async function createLead(formData: FormData) {
   const raw = Object.fromEntries(formData.entries());
   const parsed = leadSchema.safeParse(raw);
   if (!parsed.success) {
-    throw new Error(parsed.error.issues.map((issue) => issue.message).join(', '));
+    throw new Error(formatValidationMessage(parsed.error.issues));
+  }
+
+  const redirectTo = sanitizeRedirectPath(formData.get('redirectTo'), '/');
+  const session = await getActiveSession();
+  if (!session) {
+    redirect(`/login?next=${encodeURIComponent(redirectTo)}`);
   }
 
   if (parsed.data.website) {
@@ -42,7 +48,7 @@ export async function createLead(formData: FormData) {
     if (error) throw error;
 
     void writeAuditLog({
-      actor: parsed.data.email,
+      actor: session?.email || parsed.data.email,
       action: 'create',
       tableName: 'leads',
       rowId: data.id,
@@ -50,7 +56,7 @@ export async function createLead(formData: FormData) {
     });
   } else {
     void writeAuditLog({
-      actor: parsed.data.email,
+      actor: session?.email || parsed.data.email,
       action: 'create',
       tableName: 'leads',
       after: {
@@ -79,7 +85,6 @@ export async function createLead(formData: FormData) {
     }),
   );
 
-  const redirectTo = sanitizeRedirectPath(formData.get('redirectTo'), '/');
   revalidatePath('/');
   revalidatePath('/products');
   revalidatePath('/upcoming');

@@ -4,6 +4,13 @@
 
 :root {
   color-scheme: light;
+  --brand-accent: #0f172a;
+  --brand-font: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --brand-accent-soft: color-mix(in srgb, var(--brand-accent) 10%, white);
+}
+
+html {
+  font-family: var(--brand-font);
 }
 
 html.dark {
@@ -35,4 +42,18 @@ body {
 
 .glass {
   @apply border border-white/30 bg-white/80 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/70;
+}
+
+
+html[data-button-style='outline'] button.ui-button,
+html[data-button-style='outline'] a.ui-link-button {
+  background: transparent;
+  color: var(--brand-accent);
+  border: 1px solid var(--brand-accent);
+}
+
+html[data-button-style='soft'] button.ui-button,
+html[data-button-style='soft'] a.ui-link-button {
+  background: var(--brand-accent-soft);
+  color: var(--brand-accent);
 }

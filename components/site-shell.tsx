@@ -1,9 +1,11 @@
 import Link from 'next/link';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { Badge, Card } from '@/components/ui';
+import { Badge, Card, Button } from '@/components/ui';
+import { ChatbotWidget } from '@/components/chatbot-widget';
 import { getSiteSettings } from '@/lib/data';
-import { cn } from '@/lib/utils';
-import { Globe, ShieldCheck, Zap } from 'lucide-react';
+import { getAdminSession } from '@/lib/session';
+import { getVisitorSession } from '@/lib/auth';
+import { Globe, LogIn, LogOut, ShieldCheck, Zap } from 'lucide-react';
 
 const nav = [
   { href: '/products', label: 'Products' },
@@ -14,6 +16,8 @@ const nav = [
 
 export async function SiteShell({ children }: { children: React.ReactNode }) {
   const settings = await getSiteSettings();
+  const visitor = await getVisitorSession();
+  const admin = await getAdminSession();
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(148,163,184,0.12),_transparent_30%),linear-gradient(to_bottom,_transparent,_transparent)]">
@@ -39,9 +43,28 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
 
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <Link href="/admin" className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium dark:border-slate-800 dark:bg-slate-900">
-              Admin
-            </Link>
+            {admin?.email ? (
+              <>
+                <Link href="/admin" className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium dark:border-slate-800 dark:bg-slate-900">
+                  CRM
+                </Link>
+                <form action="/api/auth/logout" method="post">
+                  <Button type="submit" className="gap-2 bg-slate-950 px-4 py-3 text-sm text-white dark:bg-white dark:text-slate-950">
+                    <LogOut className="h-4 w-4" /> Logout
+                  </Button>
+                </form>
+              </>
+            ) : visitor?.email ? (
+              <form action="/api/auth/logout" method="post">
+                <Button type="submit" className="gap-2 bg-slate-950 px-4 py-3 text-sm text-white dark:bg-white dark:text-slate-950">
+                  <LogOut className="h-4 w-4" /> Logout
+                </Button>
+              </form>
+            ) : (
+              <Link href="/login" className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium dark:border-slate-800 dark:bg-slate-900">
+                <LogIn className="mr-2 h-4 w-4" /> Login
+              </Link>
+            )}
           </div>
         </div>
       </header>
@@ -80,6 +103,13 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
           </Card>
         </div>
       </footer>
+      <ChatbotWidget
+        enabled={settings.chatbot_enabled}
+        brandName={settings.brand_name}
+        greeting={settings.chatbot_welcome_message}
+        defaultAnswer={settings.chatbot_default_answer}
+        suggestions={settings.chatbot_faqs.map((item) => item.question)}
+      />
     </div>
   );
 }

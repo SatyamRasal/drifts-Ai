@@ -1,9 +1,13 @@
 import type { MetadataRoute } from 'next';
 import { getProducts } from '@/lib/data';
 
+function getSiteUrl() {
+  return process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://driftsai.com';
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [current, upcoming] = await Promise.all([getProducts('current'), getProducts('upcoming')]);
-  const base = 'https://driftsai.com';
+  const base = getSiteUrl();
   return [
     { url: `${base}/`, lastModified: new Date() },
     { url: `${base}/products`, lastModified: new Date() },

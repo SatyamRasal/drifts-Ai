@@ -1,6 +1,29 @@
 import { cache } from 'react';
 import { tryGetSupabaseAdminClient } from '@/lib/supabase';
 import { safeJsonParse } from '@/lib/utils';
+import { parseFaqList, type ChatbotFaq } from '@/lib/chatbot';
+
+export type LandingBlockType = 'hero' | 'text' | 'image' | 'video' | 'cta' | 'feature_grid' | 'stats' | 'spacer';
+
+export type LandingBlock = {
+  id: string;
+  type: LandingBlockType;
+  eyebrow?: string;
+  title?: string;
+  subtitle?: string;
+  body?: string;
+  media_url?: string;
+  label?: string;
+  href?: string;
+  align?: 'left' | 'center';
+  columns?: number;
+  background?: 'surface' | 'muted' | 'dark' | 'accent';
+  items?: { title: string; text: string }[];
+  stats?: { label: string; value: string }[];
+  caption?: string;
+  autoplay?: boolean;
+  loop?: boolean;
+};
 
 export type SiteSettings = {
   brand_name: string;
@@ -23,6 +46,22 @@ export type SiteSettings = {
   seo_description: string;
   og_image_url: string;
   social_links: { label: string; href: string }[];
+  accent_color: string;
+  font_family: 'inter' | 'system' | 'serif' | 'mono' | 'space';
+  button_style: 'solid' | 'outline' | 'soft';
+  landing_blocks: LandingBlock[];
+  chatbot_enabled: boolean;
+  chatbot_welcome_message: string;
+  chatbot_default_answer: string;
+  chatbot_ai_enabled: boolean;
+  chatbot_ai_model: string;
+  chatbot_system_prompt: string;
+  chatbot_faqs: ChatbotFaq[];
+  chatbot_openai_api_key?: string;
+};
+
+export type AdminSiteSettings = SiteSettings & {
+  chatbot_openai_api_key: string;
 };
 
 export type Product = {
@@ -102,6 +141,17 @@ const defaults: SiteSettings = {
   seo_description: 'A high-end product website with interested leads, enquiries, support requests, admin CMS, and Supabase CRM.',
   og_image_url: '',
   social_links: [],
+  accent_color: '#0f172a',
+  font_family: 'inter',
+  button_style: 'solid',
+  landing_blocks: [],
+  chatbot_enabled: true,
+  chatbot_welcome_message: 'Ask me anything about the site, products, pricing, setup, or support.',
+  chatbot_default_answer: 'I could not match that question yet. Please rephrase it, or ask an admin to add it to the knowledge base.',
+  chatbot_ai_enabled: false,
+  chatbot_ai_model: 'gpt-4.1-mini',
+  chatbot_system_prompt: 'You are a CRM website assistant. Answer concisely, use only the provided knowledge base and product/site context, and avoid inventing details. If the answer is not known, say so and suggest the default fallback.',
+  chatbot_faqs: [],
 };
 
 const pagesFallback: Record<'privacy' | 'terms' | 'cookies', PageContent> = {
@@ -131,8 +181,52 @@ const pagesFallback: Record<'privacy' | 'terms' | 'cookies', PageContent> = {
   },
 };
 
-function mapSettings(data: Record<string, unknown> | null | undefined): SiteSettings {
+function normalizeLandingBlocks(value: unknown): LandingBlock[] {
+  if (!Array.isArray(value)) return [];
+
+  return value
+    .map((item, index): LandingBlock | null => {
+      if (!item || typeof item !== 'object') return null;
+      const block = item as Partial<LandingBlock>;
+      const id = typeof block.id === 'string' && block.id.trim() ? block.id : `block-${index + 1}`;
+      const type = (block.type as LandingBlockType) || 'text';
+      const items = Array.isArray(block.items)
+        ? block.items
+            .map((entry) => (entry && typeof entry === 'object' ? { title: String((entry as { title?: unknown }).title ?? ''), text: String((entry as { text?: unknown }).text ?? '') } : null))
+            .filter((entry): entry is { title: string; text: string } => Boolean(entry))
+        : [];
+      const stats = Array.isArray(block.stats)
+        ? block.stats
+            .map((entry) => (entry && typeof entry === 'object' ? { label: String((entry as { label?: unknown }).label ?? ''), value: String((entry as { value?: unknown }).value ?? '') } : null))
+            .filter((entry): entry is { label: string; value: string } => Boolean(entry))
+        : [];
+
+      return {
+        id,
+        type,
+        eyebrow: typeof block.eyebrow === 'string' ? block.eyebrow : undefined,
+        title: typeof block.title === 'string' ? block.title : undefined,
+        subtitle: typeof block.subtitle === 'string' ? block.subtitle : undefined,
+        body: typeof block.body === 'string' ? block.body : undefined,
+        media_url: typeof block.media_url === 'string' ? block.media_url : undefined,
+        label: typeof block.label === 'string' ? block.label : undefined,
+        href: typeof block.href === 'string' ? block.href : undefined,
+        align: block.align === 'center' ? 'center' : 'left',
+        columns: typeof block.columns === 'number' ? block.columns : undefined,
+        background: block.background === 'muted' || block.background === 'dark' || block.background === 'accent' ? block.background : 'surface',
+        items,
+        stats,
+        caption: typeof block.caption === 'string' ? block.caption : undefined,
+        autoplay: Boolean(block.autoplay),
+        loop: Boolean(block.loop),
+      };
+    })
+    .filter((block): block is LandingBlock => block !== null);
+}
+
+function mapSettings(data: Record<string, unknown> | null | undefined, includeSecrets = false): SiteSettings {
   if (!data) return defaults;
+  const faqs = parseFaqList(data.chatbot_faqs);
   return {
     ...defaults,
     brand_name: String(data.brand_name ?? defaults.brand_name),
@@ -155,22 +249,38 @@ function mapSettings(data: Record<string, unknown> | null | undefined): SiteSett
     seo_description: String(data.seo_description ?? defaults.seo_description),
     og_image_url: String(data.og_image_url ?? defaults.og_image_url),
     social_links: Array.isArray(data.social_links) ? data.social_links as { label: string; href: string }[] : safeJsonParse(String(data.social_links ?? '[]'), []),
+    accent_color: String(data.accent_color ?? defaults.accent_color),
+    font_family: (data.font_family as SiteSettings['font_family']) ?? defaults.font_family,
+    button_style: (data.button_style as SiteSettings['button_style']) ?? defaults.button_style,
+    landing_blocks: normalizeLandingBlocks(data.landing_blocks),
+    chatbot_enabled: Boolean(data.chatbot_enabled ?? defaults.chatbot_enabled),
+    chatbot_welcome_message: String(data.chatbot_welcome_message ?? defaults.chatbot_welcome_message),
+    chatbot_default_answer: String(data.chatbot_default_answer ?? defaults.chatbot_default_answer),
+    chatbot_ai_enabled: Boolean(data.chatbot_ai_enabled ?? defaults.chatbot_ai_enabled),
+    chatbot_ai_model: String(data.chatbot_ai_model ?? defaults.chatbot_ai_model),
+    chatbot_system_prompt: String(data.chatbot_system_prompt ?? defaults.chatbot_system_prompt),
+    chatbot_faqs: faqs,
+    chatbot_openai_api_key: includeSecrets ? String(data.chatbot_openai_api_key ?? '') : '',
   };
 }
 
-export const getSiteSettings = cache(async (): Promise<SiteSettings> => {
+async function loadSettings(includeSecrets = false) {
   const supabase = tryGetSupabaseAdminClient();
-  if (!supabase) return defaults;
+  if (!supabase) return mapSettings(null, includeSecrets);
 
   try {
     const { data, error } = await supabase.from('site_settings').select('*');
-    if (error || !data?.length) return defaults;
+    if (error || !data?.length) return mapSettings(null, includeSecrets);
     const row = Object.fromEntries(data.map((item: { key: string; value: unknown }) => [item.key, item.value]));
-    return mapSettings(row as Record<string, unknown>);
+    return mapSettings(row as Record<string, unknown>, includeSecrets);
   } catch {
-    return defaults;
+    return mapSettings(null, includeSecrets);
   }
-});
+}
+
+export const getSiteSettings = cache(async (): Promise<SiteSettings> => loadSettings(false));
+
+export const getAdminSiteSettings = cache(async (): Promise<AdminSiteSettings> => loadSettings(true) as Promise<AdminSiteSettings>);
 
 export const getProducts = cache(async (kind?: 'current' | 'upcoming'): Promise<Product[]> => {
   const supabase = tryGetSupabaseAdminClient();

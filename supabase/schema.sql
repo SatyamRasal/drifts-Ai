@@ -62,7 +62,6 @@ create table if not exists public.audit_logs (
   created_at timestamptz not null default now()
 );
 
-
 create or replace function public.touch_updated_at()
 returns trigger language plpgsql as $$
 begin
@@ -74,12 +73,6 @@ $$;
 create trigger touch_products_updated_at before update on public.products for each row execute function public.touch_updated_at();
 create trigger touch_leads_updated_at before update on public.leads for each row execute function public.touch_updated_at();
 create trigger touch_pages_updated_at before update on public.pages for each row execute function public.touch_updated_at();
-
-
-create index if not exists idx_products_kind_sort_order on public.products (kind, sort_order, created_at desc);
-create index if not exists idx_leads_status_created_at on public.leads (status, created_at desc);
-create index if not exists idx_audit_logs_created_at on public.audit_logs (created_at desc);
-
 
 alter table public.site_settings enable row level security;
 alter table public.products enable row level security;
@@ -115,7 +108,19 @@ values
   ('seo_title', '"Drifts AI — Premium product showcase and CRM"'::jsonb),
   ('seo_description', '"A high-end product website with interested leads, enquiries, support requests, admin CMS, and Supabase CRM."'::jsonb),
   ('og_image_url', '""'::jsonb),
-  ('social_links', '[]'::jsonb)
+  ('social_links', '[]'::jsonb),
+  ('accent_color', '"#0f172a"'::jsonb),
+  ('font_family', '"inter"'::jsonb),
+  ('button_style', '"solid"'::jsonb),
+  ('landing_blocks', '[]'::jsonb),
+  ('chatbot_enabled', 'true'::jsonb),
+  ('chatbot_welcome_message', '"Ask me anything about the site, products, pricing, setup, or support."'::jsonb),
+  ('chatbot_default_answer', '"I could not match that question yet. Please rephrase it, or ask an admin to add it to the knowledge base."'::jsonb),
+  ('chatbot_ai_enabled', 'false'::jsonb),
+  ('chatbot_ai_model', '"gpt-4.1-mini"'::jsonb),
+  ('chatbot_system_prompt', '"You are a CRM website assistant. Answer concisely, use only the provided knowledge base and product/site context, and avoid inventing details. If the answer is not known, say so and suggest the default fallback."'::jsonb),
+  ('chatbot_faqs', '[]'::jsonb),
+  ('chatbot_openai_api_key', '""'::jsonb)
 on conflict (key) do update set value = excluded.value, updated_at = now();
 
 insert into public.pages (slug, title, content, seo_title, seo_description)
@@ -124,6 +129,5 @@ values
   ('terms', 'Terms of Service', 'Replace this default terms page from the admin panel.', 'Terms of Service — Drifts AI', 'Terms of service for Drifts AI.'),
   ('cookies', 'Cookie Policy', 'Replace this default cookie policy from the admin panel.', 'Cookie Policy — Drifts AI', 'Cookie policy for Drifts AI.')
 on conflict (slug) do update set title = excluded.title, content = excluded.content, seo_title = excluded.seo_title, seo_description = excluded.seo_description, updated_at = now();
-
 
 create trigger touch_site_settings_updated_at before update on public.site_settings for each row execute function public.touch_updated_at();

@@ -8,12 +8,10 @@ import { writeAuditLog } from '@/lib/audit';
 import { revalidatePath } from 'next/cache';
 import { sanitizeFilename } from '@/lib/utils';
 
-
-
 const MAX_UPLOAD_SIZE = 8 * 1024 * 1024;
 
 export async function uploadSiteAsset(formData: FormData) {
-  const session = getAdminSession();
+  const session = await getAdminSession();
   if (!session) redirect('/admin/login');
   const adminEmail = session.email;
   const supabase = getSupabaseAdminClient();

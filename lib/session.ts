@@ -18,9 +18,6 @@ function getSecret() {
     throw new Error('ADMIN_SESSION_SECRET must be set to a long random string, or ADMIN_PASSWORD / ADMIN_PASSWORD_HASH must be configured.');
   }
 
-  // Fallback for deployments that omitted ADMIN_SESSION_SECRET.
-  // This keeps login functional while still producing a deterministic,
-  // server-only signing key tied to the admin configuration.
   return crypto.createHash('sha256').update(`${email}:${passwordSource}`).digest('hex');
 }
 
@@ -65,13 +62,13 @@ export function verifySessionToken(token?: string | null) {
   }
 }
 
-export function getAdminSession() {
-  const token = cookies().get(ADMIN_COOKIE)?.value;
+export async function getAdminSession() {
+  const token = (await cookies()).get(ADMIN_COOKIE)?.value;
   return verifySessionToken(token);
 }
 
-export function setAdminCookie(token: string) {
-  cookies().set(ADMIN_COOKIE, token, {
+export async function setAdminCookie(token: string) {
+  (await cookies()).set(ADMIN_COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
@@ -80,8 +77,8 @@ export function setAdminCookie(token: string) {
   });
 }
 
-export function clearAdminCookie() {
-  cookies().set(ADMIN_COOKIE, '', {
+export async function clearAdminCookie() {
+  (await cookies()).set(ADMIN_COOKIE, '', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
