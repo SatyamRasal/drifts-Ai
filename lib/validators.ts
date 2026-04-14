@@ -76,7 +76,7 @@ export const settingsSchema = z.object({
   footerText: z.string().trim().max(300),
   theme: z.enum(['light', 'dark', 'system']),
   seoTitle: z.string().trim().min(10).max(160),
-  seoDescription: z.string().trim().min(40).max(260),
+  seoDescription: z.string().trim().min(20).max(260),
   ogImageUrl: z.string().url().optional().or(z.literal('')),
   accentColor: z.string().trim().regex(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/).default('#0f172a'),
   fontFamily: z.enum(['inter', 'system', 'serif', 'mono', 'space']),
@@ -100,5 +100,5 @@ export const pageSchema = z.object({
   title: z.string().trim().min(4).max(120),
   content: z.string().trim().min(30).max(12000),
   seoTitle: z.string().trim().min(10).max(160),
-  seoDescription: z.string().trim().min(40).max(260),
+  seoDescription: z.string().trim().min(20).max(260),
 });

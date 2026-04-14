@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Script from 'next/script';
 import { usePathname, useSearchParams } from 'next/navigation';
 
@@ -11,18 +11,33 @@ declare global {
   }
 }
 
+const COOKIE_NAME = 'driftsai_cookie_consent';
+
+function hasAnalyticsConsent() {
+  if (typeof document === 'undefined') return false;
+  return document.cookie.split('; ').some((entry) => entry.startsWith(`${COOKIE_NAME}=accepted`));
+}
+
 export function GoogleAnalytics({ measurementId }: { measurementId: string }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
-    if (!measurementId || typeof window === 'undefined' || typeof window.gtag !== 'function') return;
+    setEnabled(hasAnalyticsConsent());
+    const handler = () => setEnabled(hasAnalyticsConsent());
+    window.addEventListener('cookie-consent-change', handler);
+    return () => window.removeEventListener('cookie-consent-change', handler);
+  }, []);
+
+  useEffect(() => {
+    if (!enabled || !measurementId || typeof window === 'undefined' || typeof window.gtag !== 'function') return;
     const query = searchParams?.toString();
     const pagePath = query ? `${pathname}?${query}` : pathname;
     window.gtag('config', measurementId, { page_path: pagePath });
-  }, [measurementId, pathname, searchParams]);
+  }, [enabled, measurementId, pathname, searchParams]);
 
-  if (!measurementId) return null;
+  if (!measurementId || !enabled) return null;
 
   return (
     <>

@@ -121,6 +121,20 @@ export type PageContent = {
   updated_at: string;
 };
 
+function normalizePageContent(slug: PageContent['slug'], value: unknown): PageContent {
+  const fallback = pagesFallback[slug];
+  if (!value || typeof value !== 'object') return fallback;
+  const page = value as Partial<PageContent>;
+  return {
+    slug,
+    title: typeof page.title === 'string' && page.title.trim() ? page.title : fallback.title,
+    content: typeof page.content === 'string' && page.content.trim() ? page.content : fallback.content,
+    seo_title: typeof page.seo_title === 'string' && page.seo_title.trim() ? page.seo_title : fallback.seo_title,
+    seo_description: typeof page.seo_description === 'string' && page.seo_description.trim() ? page.seo_description : fallback.seo_description,
+    updated_at: typeof page.updated_at === 'string' && page.updated_at.trim() ? page.updated_at : fallback.updated_at,
+  };
+}
+
 const defaults: SiteSettings = {
   brand_name: 'Drifts AI',
   legal_name: 'Drifts AI',
@@ -162,7 +176,7 @@ const pagesFallback: Record<'privacy' | 'terms' | 'cookies', PageContent> = {
     title: 'Privacy Policy',
     content: 'This is the default privacy policy text. Replace it from the admin panel.',
     seo_title: 'Privacy Policy — Drifts AI',
-    seo_description: 'Privacy policy for Drifts AI.',
+    seo_description: 'Learn how Drifts AI collects, stores, and protects personal data on this website and in the CRM.',
     updated_at: new Date().toISOString(),
   },
   terms: {
@@ -170,7 +184,7 @@ const pagesFallback: Record<'privacy' | 'terms' | 'cookies', PageContent> = {
     title: 'Terms of Service',
     content: 'This is the default terms text. Replace it from the admin panel.',
     seo_title: 'Terms of Service — Drifts AI',
-    seo_description: 'Terms of service for Drifts AI.',
+    seo_description: 'Read the terms that govern access to the Drifts AI website, forms, and CRM-controlled services.',
     updated_at: new Date().toISOString(),
   },
   cookies: {
@@ -178,7 +192,7 @@ const pagesFallback: Record<'privacy' | 'terms' | 'cookies', PageContent> = {
     title: 'Cookie Policy',
     content: 'This is the default cookie policy text. Replace it from the admin panel.',
     seo_title: 'Cookie Policy — Drifts AI',
-    seo_description: 'Cookie policy for Drifts AI.',
+    seo_description: 'Understand how Drifts AI uses cookies, tracking, and consent choices across the website.',
     updated_at: new Date().toISOString(),
   },
 };
@@ -333,7 +347,7 @@ export const getPageContent = cache(async (slug: 'privacy' | 'terms' | 'cookies'
   try {
     const { data, error } = await supabase.from('pages').select('*').eq('slug', slug).maybeSingle();
     if (error || !data) return pagesFallback[slug];
-    return data as PageContent;
+    return normalizePageContent(slug, data);
   } catch {
     return pagesFallback[slug];
   }
