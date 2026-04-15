@@ -4,11 +4,26 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { SiteShell } from '@/components/site-shell';
 import { GoogleAnalytics } from '@/components/google-analytics';
 import { getSiteSettings } from '@/lib/data';
+import { getConfiguredSiteUrl } from '@/lib/site-url';
 import type { CSSProperties } from 'react';
 
+const siteUrl = getConfiguredSiteUrl() || 'https://driftsai.com';
+
 export const metadata: Metadata = {
-  title: 'Drifts AI',
+  metadataBase: new URL(siteUrl),
+  title: { default: 'Drifts AI', template: '%s | Drifts AI' },
   description: 'Premium software solutions website with CRM, admin CMS, and secure lead handling.',
+  openGraph: {
+    type: 'website',
+    siteName: 'Drifts AI',
+    title: 'Drifts AI',
+    description: 'Premium software solutions website with CRM, admin CMS, and secure lead handling.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Drifts AI',
+    description: 'Premium software solutions website with CRM, admin CMS, and secure lead handling.',
+  },
 };
 
 function fontStack(font: string) {

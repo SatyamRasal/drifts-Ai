@@ -1,5 +1,7 @@
 import Link from 'next/link';
+import Script from 'next/script';
 import { getProducts, getSiteSettings } from '@/lib/data';
+import { getConfiguredSiteUrl } from '@/lib/site-url';
 import { Badge, Card, LinkButton } from '@/components/ui';
 import { ProductCard } from '@/components/product-card';
 import { SectionHeading } from '@/components/section-heading';
@@ -10,12 +12,36 @@ export const revalidate = 60;
 
 export async function generateMetadata() {
   const settings = await getSiteSettings();
-  return { title: settings.seo_title, description: settings.seo_description };
+  return {
+    title: settings.seo_title,
+    description: settings.seo_description,
+    alternates: { canonical: '/' },
+    openGraph: {
+      title: settings.seo_title,
+      description: settings.seo_description,
+      url: '/',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: settings.seo_title,
+      description: settings.seo_description,
+    },
+  };
 }
 
 export default async function HomePage() {
   const [settings, current, upcoming] = await Promise.all([getSiteSettings(), getProducts('current'), getProducts('upcoming')]);
   const featured = current.filter((product) => product.featured).slice(0, 3);
+  const siteUrl = getConfiguredSiteUrl() || 'https://driftsai.com';
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: settings.brand_name,
+    url: siteUrl,
+    description: settings.seo_description,
+  };
+
   const highlights = [
     { icon: ShieldCheck, title: 'Secure CRM', text: 'Every lead is tracked centrally with audit logs and protected admin access.' },
     { icon: Gauge, title: 'Fast conversion paths', text: 'Interested, inquiry, and support flows are optimized for high-intent visitors.' },
@@ -24,6 +50,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <Script id="homepage-structured-data" type="application/ld+json" strategy="afterInteractive">{JSON.stringify(structuredData)}</Script>
       {settings.landing_blocks.length ? <LandingBlocks blocks={settings.landing_blocks} /> : (
         <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
           <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">

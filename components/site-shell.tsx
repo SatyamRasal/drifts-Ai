@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Badge, Card, Button } from '@/components/ui';
 import { ChatbotWidget } from '@/components/chatbot-widget';
+import { CookieConsentBanner } from '@/components/cookie-consent';
 import { getSiteSettings } from '@/lib/data';
 import { getAdminSession } from '@/lib/session';
 import { getVisitorSession } from '@/lib/auth';
@@ -110,6 +111,7 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
         defaultAnswer={settings.chatbot_default_answer}
         suggestions={settings.chatbot_faqs.map((item) => item.question)}
       />
+      <CookieConsentBanner />
     </div>
   );
 }

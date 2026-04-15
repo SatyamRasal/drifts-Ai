@@ -2,7 +2,22 @@ import { getPageContent } from '@/lib/data';
 
 export async function generateMetadata() {
   const page = await getPageContent('terms');
-  return { title: page.seo_title, description: page.seo_description };
+  return {
+    title: page.seo_title,
+    description: page.seo_description,
+    alternates: { canonical: '/terms' },
+    openGraph: {
+      title: page.seo_title,
+      description: page.seo_description,
+      url: '/terms',
+      type: 'article',
+    },
+    twitter: {
+      card: 'summary',
+      title: page.seo_title,
+      description: page.seo_description,
+    },
+  };
 }
 
 export default async function TermsPage() {

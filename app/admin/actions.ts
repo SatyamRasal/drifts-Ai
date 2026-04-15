@@ -190,25 +190,31 @@ export async function saveLandingBlocks(formData: FormData) {
 
 export async function savePageContent(formData: FormData) {
   const actor = await requireAdminEmail();
-  const raw = Object.fromEntries(formData.entries());
-  const parsed = pageSchema.safeParse(raw);
-  if (!parsed.success) throw new Error(formatValidationMessage(parsed.error.issues));
-  const supabase = getSupabaseAdminClient();
-  const payload = {
-    slug: parsed.data.slug,
-    title: parsed.data.title,
-    content: parsed.data.content,
-    seo_title: parsed.data.seoTitle,
-    seo_description: parsed.data.seoDescription,
-  };
-  const { data: before } = await supabase.from('pages').select('*').eq('slug', parsed.data.slug).maybeSingle();
-  const { data, error } = await supabase.from('pages').upsert(payload, { onConflict: 'slug' }).select('*').single();
-  if (error) throw error;
-  void writeAuditLog({ actor, action: before ? 'update' : 'create', tableName: 'pages', rowId: parsed.data.slug, before, after: data });
-  revalidatePath('/privacy');
-  revalidatePath('/terms');
-  revalidatePath('/cookies');
-  revalidatePath('/admin');
+  try {
+    const raw = Object.fromEntries(formData.entries());
+    const parsed = pageSchema.safeParse(raw);
+    if (!parsed.success) throw new Error(formatValidationMessage(parsed.error.issues));
+    const supabase = getSupabaseAdminClient();
+    const payload = {
+      slug: parsed.data.slug,
+      title: parsed.data.title,
+      content: parsed.data.content,
+      seo_title: parsed.data.seoTitle,
+      seo_description: parsed.data.seoDescription,
+    };
+    const { data: before } = await supabase.from('pages').select('*').eq('slug', parsed.data.slug).maybeSingle();
+    const { data, error } = await supabase.from('pages').upsert(payload, { onConflict: 'slug' }).select('*').single();
+    if (error) throw error;
+    void writeAuditLog({ actor, action: before ? 'update' : 'create', tableName: 'pages', rowId: parsed.data.slug, before, after: data });
+    revalidatePath('/privacy');
+    revalidatePath('/terms');
+    revalidatePath('/cookies');
+    revalidatePath('/admin');
+  } catch (error) {
+    console.error('savePageContent failed:', error);
+    redirect('/admin?flash=page_save_failed');
+  }
+
   redirect('/admin?flash=page_saved');
 }
 
