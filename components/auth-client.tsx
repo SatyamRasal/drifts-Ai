@@ -199,7 +199,7 @@ export function AuthClient({ nextPath, signedInEmail, signedInRole }: { nextPath
           </label>
         ) : null}
 
-        <Button type="submit" className="w-full" disabled={busy !== null || (mode === 'signup' && !acceptedTerms)}>{busy === 'password' || busy === 'reset' ? 'Working…' : mode === 'signup' ? 'Create account' : mode === 'reset' ? 'Send reset email' : 'Sign in'}</Button>
+        <Button type="submit" className="w-full" disabled={busy !== null || (mode === 'signup' && !acceptedTerms)}>{busy === 'password' ? 'Working…' : mode === 'signup' ? 'Create account' : mode === 'reset' ? 'Send reset email' : 'Sign in'}</Button>
 
         <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
           {mode !== 'reset' ? (
@@ -237,7 +237,7 @@ export function AuthClient({ nextPath, signedInEmail, signedInRole }: { nextPath
         </>
       ) : (
         <div className="rounded-2xl border border-dashed p-4 text-sm text-slate-600 dark:text-slate-300">
-          Login with Google ID .
+          Google OAuth is currently disabled. Enable it in Supabase if you want social login.
         </div>
       )}
 

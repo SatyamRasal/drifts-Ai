@@ -78,9 +78,9 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
             <div className="text-lg font-semibold tracking-tight">{settings.brand_name}</div>
             <p className="max-w-xl text-sm leading-6 text-slate-600 dark:text-slate-300">{settings.footer_text}</p>
             <div className="flex flex-wrap gap-2">
-              <Badge className="border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-300"><ShieldCheck className="mr-1 h-3.5 w-3.5" /> Secure </Badge>
-              <Badge className="border-sky-200 bg-sky-50 text-sky-700 dark:border-sky-900 dark:bg-sky-950 dark:text-sky-300"><Zap className="mr-1 h-3.5 w-3.5" /> Fast</Badge>
-              <Badge className="border-violet-200 bg-violet-50 text-violet-700 dark:border-violet-900 dark:bg-violet-950 dark:text-violet-300"><Globe className="mr-1 h-3.5 w-3.5" /> worldwide</Badge>
+              <Badge className="border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-300"><ShieldCheck className="mr-1 h-3.5 w-3.5" /> Secure CRM</Badge>
+              <Badge className="border-sky-200 bg-sky-50 text-sky-700 dark:border-sky-900 dark:bg-sky-950 dark:text-sky-300"><Zap className="mr-1 h-3.5 w-3.5" /> Fast lead capture</Badge>
+              <Badge className="border-violet-200 bg-violet-50 text-violet-700 dark:border-violet-900 dark:bg-violet-950 dark:text-violet-300"><Globe className="mr-1 h-3.5 w-3.5" /> SEO-ready</Badge>
             </div>
           </div>
 
