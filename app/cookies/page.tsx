@@ -2,22 +2,7 @@ import { getPageContent } from '@/lib/data';
 
 export async function generateMetadata() {
   const page = await getPageContent('cookies');
-  return {
-    title: page.seo_title,
-    description: page.seo_description,
-    alternates: { canonical: '/cookies' },
-    openGraph: {
-      title: page.seo_title,
-      description: page.seo_description,
-      url: '/cookies',
-      type: 'article',
-    },
-    twitter: {
-      card: 'summary',
-      title: page.seo_title,
-      description: page.seo_description,
-    },
-  };
+  return { title: page.seo_title, description: page.seo_description };
 }
 
 export default async function CookiesPage() {

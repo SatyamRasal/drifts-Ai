@@ -7,10 +7,6 @@ import { ArrowRight, ShieldCheck } from 'lucide-react';
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-export async function generateMetadata() {
-  return { robots: { index: false, follow: false } };
-}
-
 export default async function AdminLoginPage({ searchParams }: { searchParams?: Promise<{ error?: string }> }) {
   const { error } = (await searchParams) || {};
   const session = await getAdminSession();

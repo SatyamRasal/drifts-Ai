@@ -47,8 +47,6 @@ export function flashMessageForAdmin(token?: string) {
       return 'Landing page sections updated successfully.';
     case 'page_saved':
       return 'Page content saved successfully.';
-    case 'page_save_failed':
-      return 'The page could not be saved. Review the content and try again.';
     case 'lead_updated':
       return 'Lead status updated successfully.';
     case 'chatbot_saved':

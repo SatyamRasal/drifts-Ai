@@ -2,7 +2,6 @@
 
 import { useMemo, useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
 import { getClientSiteUrl } from '@/lib/site-url';
 import { Button, Card, Input, SecondaryButton } from '@/components/ui';
@@ -59,7 +58,6 @@ export function AuthClient({ nextPath, signedInEmail, signedInRole }: { nextPath
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [busy, setBusy] = useState<'password' | 'google' | 'logout' | 'reset' | null>(null);
   const [message, setMessage] = useState<string>('');
 
@@ -70,17 +68,12 @@ export function AuthClient({ nextPath, signedInEmail, signedInRole }: { nextPath
 
     try {
       if (mode === 'reset') {
-        setBusy('reset');
         await sendPasswordReset(email, '/reset-password');
         setMessage('Password reset email sent. Check your inbox and continue from the recovery link.');
         return;
       }
 
       if (mode === 'signup') {
-        if (!acceptedTerms) {
-          throw new Error('You must accept the privacy, terms, and cookie notice before creating an account.');
-        }
-
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
@@ -144,111 +137,129 @@ export function AuthClient({ nextPath, signedInEmail, signedInRole }: { nextPath
   }
 
   return (
-    <Card className="space-y-6">
-      <div className="space-y-3">
-        <div className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium text-slate-600 dark:text-slate-300">
-          <ShieldCheck className="h-3.5 w-3.5" /> Secure login
-        </div>
-        <h2 className="text-3xl font-semibold tracking-tight">Access the CRM-controlled experience</h2>
-        <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">Use one form for customers and administrators. When your email is on the admin allowlist, CRM access is unlocked automatically.</p>
-      </div>
-
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <SecondaryButton type="button" onClick={() => setMode('signin')} className={mode === 'signin' ? 'border-slate-950 bg-slate-100 dark:border-white dark:bg-slate-800' : ''}>
-          <LockKeyhole className="mr-2 h-4 w-4" /> Sign in
-        </SecondaryButton>
-        <SecondaryButton type="button" onClick={() => setMode('signup')} className={mode === 'signup' ? 'border-slate-950 bg-slate-100 dark:border-white dark:bg-slate-800' : ''}>
-          <Sparkles className="mr-2 h-4 w-4" /> Create account
-        </SecondaryButton>
-        <SecondaryButton type="button" onClick={() => setMode('reset')} className={mode === 'reset' ? 'border-slate-950 bg-slate-100 dark:border-white dark:bg-slate-800' : ''}>
-          <KeyRound className="mr-2 h-4 w-4" /> Reset password
-        </SecondaryButton>
-      </div>
-
-      <form onSubmit={handlePasswordSubmit} className="space-y-4">
-        {mode === 'signup' ? (
-          <div>
-            <label className="mb-1 block text-sm">Full name</label>
-            <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Your name" autoComplete="name" />
+    <div className="flex flex-col gap-6 lg:flex-row">
+      <Card className="flex-1 space-y-6">
+        <div className="space-y-3">
+          <div className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium text-slate-600 dark:text-slate-300">
+            <ShieldCheck className="h-3.5 w-3.5" /> Secure login
           </div>
-        ) : null}
-        <div>
-          <label className="mb-1 block text-sm">Email</label>
-          <Input value={email} onChange={(e) => setEmail(e.target.value)} type="email" autoComplete="email" required />
+          <h2 className="text-3xl font-semibold tracking-tight">Access the CRM-controlled experience</h2>
+          <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">
+            Use the same login form for customers and administrators. When your email is on the admin allowlist, CRM access is unlocked automatically.
+          </p>
         </div>
-        {mode !== 'reset' ? (
+
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <SecondaryButton type="button" onClick={() => setMode('signin')} className={mode === 'signin' ? 'border-slate-950 bg-slate-100 dark:border-white dark:bg-slate-800' : ''}>
+            <LockKeyhole className="mr-2 h-4 w-4" /> Sign in
+          </SecondaryButton>
+          <SecondaryButton type="button" onClick={() => setMode('signup')} className={mode === 'signup' ? 'border-slate-950 bg-slate-100 dark:border-white dark:bg-slate-800' : ''}>
+            <Sparkles className="mr-2 h-4 w-4" /> Create account
+          </SecondaryButton>
+          <SecondaryButton type="button" onClick={() => setMode('reset')} className={mode === 'reset' ? 'border-slate-950 bg-slate-100 dark:border-white dark:bg-slate-800' : ''}>
+            <KeyRound className="mr-2 h-4 w-4" /> Reset password
+          </SecondaryButton>
+        </div>
+
+        <form onSubmit={handlePasswordSubmit} className="space-y-4">
+          {mode === 'signup' ? (
+            <div>
+              <label className="mb-1 block text-sm">Full name</label>
+              <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Your name" autoComplete="name" />
+            </div>
+          ) : null}
           <div>
-            <label className="mb-1 block text-sm">Password</label>
-            <Input value={password} onChange={(e) => setPassword(e.target.value)} type="password" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} minLength={mode === 'signup' ? 8 : undefined} required />
+            <label className="mb-1 block text-sm">Email</label>
+            <Input value={email} onChange={(e) => setEmail(e.target.value)} type="email" autoComplete="email" required />
           </div>
-        ) : null}
-
-        {mode === 'signup' ? (
-          <label className="flex items-start gap-3 rounded-2xl border border-dashed p-4 text-sm text-slate-600 dark:text-slate-300">
-            <input
-              type="checkbox"
-              checked={acceptedTerms}
-              onChange={(e) => setAcceptedTerms(e.target.checked)}
-              className="mt-1 h-4 w-4 rounded border-slate-300 text-slate-950 focus:ring-slate-400"
-              required
-            />
-            <span>
-              I accept the <Link href="/privacy" className="font-medium text-slate-950 underline dark:text-white">Privacy Policy</Link>,{' '}
-              <Link href="/terms" className="font-medium text-slate-950 underline dark:text-white">Terms</Link>, and{' '}
-              <Link href="/cookies" className="font-medium text-slate-950 underline dark:text-white">Cookie Policy</Link>.
-            </span>
-          </label>
-        ) : null}
-
-        <Button type="submit" className="w-full" disabled={busy !== null || (mode === 'signup' && !acceptedTerms)}>{busy === 'password' || busy === 'reset' ? 'Working…' : mode === 'signup' ? 'Create account' : mode === 'reset' ? 'Send reset email' : 'Sign in'}</Button>
-
-        <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
           {mode !== 'reset' ? (
-            <button type="button" onClick={() => setMode('reset')} className="text-slate-600 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
-              Forgot password?
-            </button>
-          ) : (
-            <button type="button" onClick={() => setMode('signin')} className="text-slate-600 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
-              Back to sign in
-            </button>
-          )}
-          {mode !== 'signup' ? (
-            <button type="button" onClick={() => setMode('signup')} className="text-slate-600 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
-              Create a new account
-            </button>
-          ) : (
-            <button type="button" onClick={() => setMode('signin')} className="text-slate-600 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
-              Already have an account?
-            </button>
-          )}
-        </div>
-      </form>
-
-      {GOOGLE_ENABLED ? (
-        <>
-          <div className="flex items-center gap-4 text-xs uppercase tracking-[0.2em] text-slate-500">
-            <span className="h-px flex-1 bg-slate-200 dark:bg-slate-800" />
-            or
-            <span className="h-px flex-1 bg-slate-200 dark:bg-slate-800" />
-          </div>
-
-          <Button type="button" onClick={handleGoogle} disabled={busy !== null} className="w-full gap-2 bg-white text-slate-950 hover:bg-slate-100 dark:bg-slate-900 dark:text-white dark:hover:bg-slate-800">
-            <Mail className="h-4 w-4" /> Continue with Google
+            <div>
+              <label className="mb-1 block text-sm">Password</label>
+              <Input value={password} onChange={(e) => setPassword(e.target.value)} type="password" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} minLength={mode === 'signup' ? 8 : undefined} required />
+            </div>
+          ) : null}
+          <Button type="submit" className="w-full" disabled={busy !== null}>
+            {busy === 'password' || busy === 'reset' ? 'Working…' : mode === 'signup' ? 'Create account' : mode === 'reset' ? 'Send reset email' : 'Sign in'}
           </Button>
-        </>
-      ) : (
-        <div className="rounded-2xl border border-dashed p-4 text-sm text-slate-600 dark:text-slate-300">
-          Google OAuth is currently disabled. Enable it in Supabase if you want social login.
-        </div>
-      )}
+          <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
+            {mode !== 'reset' ? (
+              <button type="button" onClick={() => setMode('reset')} className="text-slate-600 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                Forgot password?
+              </button>
+            ) : (
+              <button type="button" onClick={() => setMode('signin')} className="text-slate-600 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                Back to sign in
+              </button>
+            )}
+            {mode !== 'signup' ? (
+              <button type="button" onClick={() => setMode('signup')} className="text-slate-600 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                Create a new account
+              </button>
+            ) : (
+              <button type="button" onClick={() => setMode('signin')} className="text-slate-600 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white">
+                Already have an account?
+              </button>
+            )}
+          </div>
+        </form>
 
-      {message ? <div role="status" aria-live="polite" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">{message}</div> : null}
+        {GOOGLE_ENABLED ? (
+          <>
+            <div className="flex items-center gap-4 text-xs uppercase tracking-[0.2em] text-slate-500">
+              <span className="h-px flex-1 bg-slate-200 dark:bg-slate-800" />
+              or
+              <span className="h-px flex-1 bg-slate-200 dark:bg-slate-800" />
+            </div>
 
-      {signedInEmail ? (
-        <div className="rounded-2xl border bg-slate-50 p-4 text-sm text-slate-700 dark:bg-slate-900 dark:text-slate-300">
-          Signed in as {signedInEmail}. {canOpenCrm || nextPath !== '/admin' ? 'Continue to your destination or sign out.' : 'This account does not have administrative access.'}
+            <Button type="button" onClick={handleGoogle} disabled={busy !== null} className="w-full gap-2 bg-white text-slate-950 hover:bg-slate-100 dark:bg-slate-900 dark:text-white dark:hover:bg-slate-800">
+              <Mail className="h-4 w-4" /> Continue with Google
+            </Button>
+          </>
+        ) : (
+          <div className="rounded-2xl border border-dashed p-4 text-sm text-slate-600 dark:text-slate-300">
+            Google OAuth is currently disabled. Enable it in Supabase if you want social login.
+          </div>
+        )}
+
+        {message ? <div role="status" aria-live="polite" className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">{message}</div> : null}
+      </Card>
+
+      <Card className="flex-1 space-y-5">
+        <div className="space-y-2">
+          <div className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">Account Status</div>
+          <h3 className="text-2xl font-semibold tracking-tight">
+            {signedInEmail ? 'You are securely signed in' : 'Partnering with DriftsAI'}
+          </h3>
+          <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">
+            {signedInEmail
+              ? canOpenCrm || nextPath !== '/admin'
+                ? `Authenticated as ${signedInEmail}. You can continue to your requested workspace or sign out.`
+                : `Authenticated as ${signedInEmail}, but this account does not have administrative access. Please sign out and use an authorized DriftsAI admin email to access the control panel.`
+              : 'While anyone can browse our ready-to-deploy software catalog, an authenticated account is required to request custom development, submit a project brief, or access support.'}
+          </p>
         </div>
-      ) : null}
-    </Card>
+
+        {signedInEmail ? (
+          <div className="space-y-3">
+            <div className="rounded-2xl border bg-slate-50 p-4 text-sm text-slate-700 dark:bg-slate-900 dark:text-slate-300">Signed in as {signedInEmail}</div>
+            <div className="flex flex-wrap gap-3">
+              <Button type="button" onClick={() => window.location.assign(canOpenCrm || nextPath !== '/admin' ? nextPath : '/')}>
+                {canOpenCrm || nextPath !== '/admin' ? 'Continue' : 'Go home'}
+              </Button>
+              <SecondaryButton type="button" onClick={handleLogout} disabled={busy === 'logout'}>
+                {busy === 'logout' ? 'Signing out…' : 'Sign out'}
+              </SecondaryButton>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-3 rounded-3xl border border-dashed p-5 text-sm text-slate-600 dark:text-slate-300">
+            <div className="flex items-center gap-3"><ShieldCheck className="h-4 w-4" /> Verified email sessions are required.</div>
+            <div className="flex items-center gap-3"><ShieldCheck className="h-4 w-4" /> Password login and signup are supported.</div>
+            <div className="flex items-center gap-3"><ShieldCheck className="h-4 w-4" /> Admin access is granted automatically when your email matches the allowlist.</div>
+            <div className="flex items-center gap-3"><ShieldCheck className="h-4 w-4" /> Password recovery is built in.</div>
+          </div>
+        )}
+      </Card>
+    </div>
   );
 }
