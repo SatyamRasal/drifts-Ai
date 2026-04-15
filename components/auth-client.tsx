@@ -60,7 +60,7 @@ export function AuthClient({ nextPath, signedInEmail, signedInRole }: { nextPath
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [busy, setBusy] = useState<'password' | 'google' | 'logout' | 'reset' | null>(null);
+  const [busy, setBusy] = useState<'password' | 'google' | 'logout' | null>(null);
   const [message, setMessage] = useState<string>('');
 
   async function handlePasswordSubmit(event: FormEvent<HTMLFormElement>) {
@@ -199,7 +199,7 @@ export function AuthClient({ nextPath, signedInEmail, signedInRole }: { nextPath
           </label>
         ) : null}
 
-        <Button type="submit" className="w-full" disabled={busy !== null || (mode === 'signup' && !acceptedTerms)}>{busy === 'password' || busy === 'reset' ? 'Working…' : mode === 'signup' ? 'Create account' : mode === 'reset' ? 'Send reset email' : 'Sign in'}</Button>
+        <Button type="submit" className="w-full" disabled={busy !== null || (mode === 'signup' && !acceptedTerms)}>{busy === 'password' ? 'Working…' : mode === 'signup' ? 'Create account' : mode === 'reset' ? 'Send reset email' : 'Sign in'}</Button>
 
         <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
           {mode !== 'reset' ? (
